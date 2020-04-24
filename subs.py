@@ -12,12 +12,12 @@ def findWord(word, list):
             return count
     return -1
 
-def decoupe(word):
-    start = word[:8]
-    end = word[17:25]
+def decoupe(word1, word2):
+    start = word1[:8]
+    end = word2[17:25]
     num="out"
     print("start", start,"end", end)
-    cmd = "ffmpeg -i " + MOVIE + " -ss " + start + " -to " + end + " -c:v copy -c:a copy " + num + ".mkv"
+    cmd = "ffmpeg -y -i " + MOVIE + " -ss " + start + " -to " + end + " -c:v copy -c:a copy " + num + ".mkv"
     print (cmd)
     os.system(cmd)
 
@@ -46,8 +46,8 @@ while i<len(Lines)-5 :
     i=i+1
     count=count+1
     #et on recommence
+wordToFind = "saber"
+print(findWord(wordToFind, quotes))
 
-print(findWord("Yoda", quotes))
-
-decoupe(timeStamp[findWord("Yoda", quotes)])
+decoupe(timeStamp[findWord(wordToFind, quotes)-2], timeStamp[findWord(wordToFind, quotes)])
 
