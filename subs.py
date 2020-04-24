@@ -1,3 +1,7 @@
+import os
+
+MOVIE = "sw3.mkv"
+
 from srt_normalizer import *
   
 def findWord(word, list):
@@ -7,6 +11,15 @@ def findWord(word, list):
         if s.find(word) !=-1 : #si on trouve le mot
             return count
     return -1
+
+def decoupe(word):
+    start = word[:8]
+    end = word[17:25]
+    num="out"
+    print("start", start,"end", end)
+    cmd = "ffmpeg -i " + MOVIE + " -ss " + start + " -to " + end + " -c:v copy -c:a copy " + num + ".mkv"
+    print (cmd)
+    os.system(cmd)
 
 
 normalize("sw3.srt")
@@ -34,5 +47,7 @@ while i<len(Lines)-5 :
     count=count+1
     #et on recommence
 
-print(findWord("clones", quotes))
+print(findWord("Yoda", quotes))
+
+decoupe(timeStamp[findWord("Yoda", quotes)])
 
