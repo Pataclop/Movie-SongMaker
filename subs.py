@@ -1,7 +1,8 @@
+# coding: utf-8
 import os
 
 MOVIE = "sw3.mkv"
-
+num=0
 from srt_normalizer import *
   
 def findWord(word, list):
@@ -13,11 +14,13 @@ def findWord(word, list):
     return -1
 
 def decoupe(word1, word2):
+    global num
     start = word1[:8]
     end = word2[17:25]
-    num="out"
     print("start", start,"end", end)
-    cmd = "ffmpeg -y -i " + MOVIE + " -ss " + start + " -to " + end + " -c:v copy -c:a copy " + num + ".mkv"
+    cmd = "ffmpeg -y -i " + MOVIE + " -ss " + start + " -to " + end + " -c:v copy -c:a copy " + "PART/" + str(num) + ".mkv"
+    #cmd = "ffmpeg -y -i "+ MOVIE + " -filter:v \"setpts=2.0*PTS\" " + "PART/" + str(num) + ".mkv"
+    num=num+1
     print (cmd)
     os.system(cmd)
 

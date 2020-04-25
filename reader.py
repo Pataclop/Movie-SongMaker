@@ -4,7 +4,7 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel, 
         QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget, QStatusBar)
-
+import os
 class VideoPlayer(QWidget):
 
     def __init__(self, parent=None):
@@ -60,8 +60,15 @@ class VideoPlayer(QWidget):
         self.statusBar.showMessage("Ready")
 
     def abrir(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Selecciona los mediose",
-                ".", "Video Files (*.mp4 *.flv *.ts *.mts *.avi)")
+
+        num=0
+        cmd = "ffmpeg -y -i " + "PART/" + str(num) + ".mkv " +  "-filter_complex \"[0:v]setpts=2.0*PTS[v];[0:a]atempo=0.5[a]\" -map \"[v]\" -map \"[a]\" " + str(num) + ".mkv"
+
+        #cmd = "ffmpeg -y -i "+ "PART/" + str(num) + ".mkv" + " -filter:v \"setpts=2.0*PTS\" "+ str(num) + ".mkv"
+        os.system(cmd)
+
+        player.setWindowTitle("CLONES")
+        fileName = "/home/flo/tmp/Movie-SongMaker/0.mkv"
 
         if fileName != '':
             self.mediaPlayer.setMedia(
@@ -71,6 +78,7 @@ class VideoPlayer(QWidget):
             self.play()
 
     def play(self):
+        
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
         else:
