@@ -1,10 +1,14 @@
 from PyQt5.QtGui import QIcon, QFont
+from PyQt5 import QtCore, QtWidgets
+
 from PyQt5.QtCore import QDir, Qt, QUrl, QSize
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel, 
         QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget, QStatusBar)
 import os
+import slider
+
 class VideoPlayer(QWidget):
 
     def __init__(self, parent=None):
@@ -24,6 +28,15 @@ class VideoPlayer(QWidget):
         openButton.setIcon(QIcon.fromTheme("document-open", QIcon("D:/_Qt/img/open.png")))
         openButton.clicked.connect(self.abrir)
 
+        speedButton = QPushButton("speedVideo")   
+        speedButton.setToolTip("Open Video File")
+        speedButton.setStatusTip("Open Video File")
+        speedButton.setFixedHeight(24)
+        speedButton.setIconSize(btnSize)
+        speedButton.setFont(QFont("Noto Sans", 8))
+        speedButton.setIcon(QIcon.fromTheme("document-open", QIcon("D:/_Qt/img/open.png")))
+        speedButton.clicked.connect(self.speed)
+
         self.playButton = QPushButton()
         self.playButton.setEnabled(False)
         self.playButton.setFixedHeight(24)
@@ -31,9 +44,13 @@ class VideoPlayer(QWidget):
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
 
-        self.positionSlider = QSlider(Qt.Horizontal)
+        self.positionSlider = slider.Slider(QtCore.Qt.Horizontal)
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
+        self.positionSlider.sliderPressed.connect(self.setPosition)
+        self.positionSlider.sliderReleased.connect(self.setPosition)
+        
+
 
         self.statusBar = QStatusBar()
         self.statusBar.setFont(QFont("Noto Sans", 7))
@@ -42,6 +59,7 @@ class VideoPlayer(QWidget):
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(0, 0, 0, 0)
         controlLayout.addWidget(openButton)
+        controlLayout.addWidget(speedButton)
         controlLayout.addWidget(self.playButton)
         controlLayout.addWidget(self.positionSlider)
 
@@ -63,6 +81,24 @@ class VideoPlayer(QWidget):
 
         num=0
         cmd = "ffmpeg -y -i " + "PART/" + str(num) + ".mkv " +  "-filter_complex \"[0:v]setpts=2.0*PTS[v];[0:a]atempo=0.5[a]\" -map \"[v]\" -map \"[a]\" " + str(num) + ".mkv"
+
+        #cmd = "ffmpeg -y -i "+ "PART/" + str(num) + ".mkv" + " -filter:v \"setpts=2.0*PTS\" "+ str(num) + ".mkv"
+        os.system(cmd)
+
+        player.setWindowTitle("CLONES")
+        fileName = "/home/flo/tmp/Movie-SongMaker/0.mkv"
+
+        if fileName != '':
+            self.mediaPlayer.setMedia(
+                    QMediaContent(QUrl.fromLocalFile(fileName)))
+            self.playButton.setEnabled(True)
+            self.statusBar.showMessage(fileName)
+            self.play()
+
+    def speed(self):
+
+        num=0
+        cmd = "ffmpeg -y -i " + "PART/" + str(num) + ".mkv " +  "-filter_complex \"[0:v]setpts=1.0*PTS[v];[0:a]atempo=1.0[a]\" -map \"[v]\" -map \"[a]\" " + str(num) + ".mkv"
 
         #cmd = "ffmpeg -y -i "+ "PART/" + str(num) + ".mkv" + " -filter:v \"setpts=2.0*PTS\" "+ str(num) + ".mkv"
         os.system(cmd)
